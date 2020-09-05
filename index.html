@@ -3,21 +3,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Great Roast Dinner Timing Chart</title>
-  <style type="text/css">
-  body{margin:40px auto;max-width:750px;font-size:16px;font-family:sans-serif;color:#222;padding:0 10px}
-  p#intro{line-height:1.6em}
-  span#meatList,span#sideIngredientList{line-height:2.5em;}
-  .item{display:inline-block;margin-bottom:0.5em;margin-right:0.5em;}
-  input{font-size:16px;}
-  fieldset{margin-bottom:1em}
-  fieldset#timingchart{margin-top:2em}
-  legend{font-weight:bold}
-  table{border-collapse: collapse;}
-  td{margin:0.5em; padding:0.5em; border-bottom:1px solid gray;}
-  td.timetd{white-space: nowrap;}
-  p.warn{color:red}
-  p.footer{color:gray;margin-top:2em;font-size:12px}
-  </style>
+  <link rel="stylesheet" href="./style.css"></style>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script type='text/javascript' src='https://code.jquery.com/jquery-1.12.4.min.js'></script>
   <script type='text/javascript' src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js'></script>
@@ -31,26 +17,26 @@
     
   <p id="intro">Cooking a traditional roast dinner isn’t difficult—it’s really just about timing everything right so it all comes together at the right time. This page uses some Javascript magic to automatically generate you a list of timed instructions. Just select your ingredients and the time you want to serve using the options below, and the timing chart will be created for you.</p>
 
-  <fieldset>
+  <fieldset id="meat">
     <legend>Meat</legend>
     <span id="meatList"></span><br/>
     Weight: <input id="weight" style="width:4em;" value="3.5"/>
     <input type="radio" name="unit" class="unitRadioButton" value="lb" id="radioLB" checked/><label for="radioLB">lb</label>
     <input type="radio" name="unit" class="unitRadioButton" value="kg" id="radioKG"/><label for="radioKG">kg</label>
   </fieldset>
-  <fieldset>
+  <fieldset id="sides">
     <legend>Sides</legend>
     <span id="sideIngredientList"></span>
   </fieldset>
-  <fieldset>
+  <fieldset id="vegetables">
     <legend>Vegetables</legend>
     <span id="vegIngredientList"></span>
   </fieldset>
-  <fieldset>
+  <fieldset id="sauces">
     <legend>Sauces</legend>
     <span id="sauceIngredientList"></span>
   </fieldset>
-  <fieldset>
+  <fieldset id="settings">
     <legend>Serving Time</legend>
     <input type="text" id="serveTime" size="8" value="7:00 pm"/>
   </fieldset>
@@ -186,33 +172,36 @@ function setup() {
   jQuery('#radioKG').change(function() { jQuery("#weight").val((parseFloat(jQuery("#weight").val()) * 0.454).toPrecision(2)); recalculate(); });
   
   // Set up side ingredient checkboxes
+  checkboxCount = 0
   sideIngCheckboxHTML = '';
   ings = Array.from( sides.keys() );
-  for (i = 0; i < ings.length; i++) { 
+  for (i = checkboxCount; i < (checkboxCount + ings.length); i++) { 
     sideIngCheckboxHTML += '<span class="item"><input type="checkbox" class="ingCheckbox" value="' + ings[i] + '" id="checkbox' + i + '"/><label for="checkbox' + i + '">' + ings[i] + '</label></span>';
   }
+  checkboxCount += ings.length;
   jQuery('#sideIngredientList').html(sideIngCheckboxHTML);
-  jQuery('.ingCheckbox').change(function() { recalculate(); });
-  jQuery('.ingCheckbox').checkboxradio();
   
   // Set up vegetables checkboxes
   vegIngCheckboxHTML = '';
   ings = Array.from( vegetables.keys() );
-  for (i = 0; i < ings.length; i++) { 
-    vegIngCheckboxHTML += '<span class="item"><input type="checkbox" class="ingCheckbox" value="' + ings[i] + '" id="checkbox' + i + '"/><label for="checkbox' + i + '">' + ings[i] + '</label></span>';
+
+  for (i = checkboxCount; i < (checkboxCount + ings.length); i++) { 
+    vegIngCheckboxHTML += '<span class="item"><input type="checkbox" class="ingCheckbox" value="' + ings[i-checkboxCount] + '" id="checkbox' + i + '"/><label for="checkbox' + i + '">' + ings[i-checkboxCount] + '</label></span>';
   }
+  checkboxCount += ings.length;
   jQuery('#vegIngredientList').html(vegIngCheckboxHTML);
-  jQuery('.ingCheckbox').change(function() { recalculate(); });
-  jQuery('.ingCheckbox').checkboxradio();
   
   // Set up sauces checkboxes
   sauceIngCheckboxHTML = '';
   ings = Array.from( sauces.keys() );
-  for (i = 0; i < ings.length; i++) { 
-    sauceIngCheckboxHTML += '<span class="item"><input type="checkbox" class="ingCheckbox" value="' + ings[i] + '" id="checkbox' + i + '"/><label for="checkbox' + i + '">' + ings[i] + '</label></span>';
+  for (i = checkboxCount; i < (checkboxCount + ings.length); i++) { 
+    sauceIngCheckboxHTML += '<span class="item"><input type="checkbox" class="ingCheckbox" value="' + ings[i-checkboxCount] + '" id="checkbox' + i + '"/><label for="checkbox' + i + '">' + ings[i-checkboxCount] + '</label></span>';
   }
+  checkboxCount += ings.length;
   jQuery('#sauceIngredientList').html(sauceIngCheckboxHTML);
-  jQuery('.ingCheckbox').change(function() { recalculate(); });
+  
+  
+  jQuery('.ingCheckbox').change(function() { recalculate(); }); 
   jQuery('.ingCheckbox').checkboxradio();
   
   // Set up serving time picker
@@ -231,16 +220,18 @@ function setup() {
   jQuery('#serveTime').timespinner({change: function() {recalculate()}, stop: function() {recalculate()}});
   
   // Default selections
+  <!--
   jQuery('#radio0').prop("checked", true);
   jQuery('#radio0').button( "refresh" );
-  jQuery('#checkbox0').prop("checked", true);
-  jQuery('#checkbox0').button( "refresh" );
-  jQuery('#checkbox2').prop("checked", true);
-  jQuery('#checkbox2').button( "refresh" );
-  jQuery('#checkbox8').prop("checked", true);
-  jQuery('#checkbox8').button( "refresh" );
-  jQuery('#checkbox12').prop("checked", true);
-  jQuery('#checkbox12').button( "refresh" );
+  //jQuery('#checkbox0').prop("checked", true);
+  //jQuery('#checkbox0').button( "refresh" );
+  //jQuery('#checkbox2').prop("checked", true);
+  //jQuery('#checkbox2').button( "refresh" );
+  //jQuery('#checkbox8').prop("checked", true);
+  //jQuery('#checkbox8').button( "refresh" );
+  //jQuery('#checkbox12').prop("checked", true);
+  //jQuery('#checkbox12').button( "refresh" );
+  -->
   recalculate();
 }
 
@@ -254,10 +245,14 @@ function recalculate() {
     }
   });
   
-  // Get all timings for those side ingredients
+  // Get all timings for the side ingredients. Vegtables and Sauces. // Would probably have been easier to use CSS to force a different layout.
   var allTimings = new Map();
-  for (i = 0; i < chosenIngs.length; i++) { 
-    var currentIng = sides.get(chosenIngs[i]);
+  for (i = 0; i < chosenIngs.length; i++) {
+	let mergedSides = new Map([...sides,...vegetables,...sauces]);
+	console.log(sides);
+	console.log(mergedSides);
+	console.log(chosenIngs);
+    var currentIng = mergedSides.get(chosenIngs[i]);
     allTimings = mergeTimingMaps(currentIng, allTimings);
   }
   
