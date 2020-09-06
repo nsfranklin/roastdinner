@@ -11,12 +11,28 @@
 </head>
 <body onload="setup();">
 
-  <h1>The Great Roast Dinner Timing Chart</h1>
+  <h1>The Roast Dinner Guide</h1>
   
   <noscript><p class="warn"><strong>Sorry, this page requires JavaScript to function.</strong></p></noscript>
     
   <p id="intro">Cooking a traditional roast dinner isn’t difficult—it’s really just about timing everything right so it all comes together at the right time. This page uses some Javascript magic to automatically generate you a list of timed instructions. Just select your ingredients and the time you want to serve using the options below, and the timing chart will be created for you.</p>
 
+  <fieldset id="settings">
+    <legend>Settings</legend>
+	Serving Time
+    <input type="text" id="serveTime" size="8" value="7:00 pm"/>
+	<span class="item"><input type="checkbox" class="settingsCheckbox" value="Show Complex Sides" id="sCheckbox1"/><label for="sCheckbox1">Show Complex Sides</label></span>
+	<span class="item"><input type="checkbox" class="settingsCheckbox" value="Show Advanced Settings" id="sCheckbox0"/><label for="sCheckbox0">Show Advanced Settings</label></span>
+  </fieldset>
+  
+  <fieldset hidden id="advancedsettings">
+    <legend>Advanced Settings</legend>
+	<span class="item"><input type="checkbox" class="advancedSettingsCheckbox" value="Use Flexible Timings" id="aSCheckbox0"/><label for="aSCheckbox0">Use Flexible Timings</label></span>
+	<span class="item"><input type="checkbox" class="advancedSettingsCheckbox" value="Show Serving Estimate Calculator" id="aSCheckbox1"/><label for="aSCheckbox1">Show Serving Estimate Calculator</label></span>
+	<span class="item"><input type="checkbox" class="advancedSettingsCheckbox" value="Show Ingredient List" id="aSCheckbox2"/><label for="aSCheckbox2">Show Ingredient List</label></span>
+	<span class="item"><input type="checkbox" class="advancedSettingsCheckbox" value="Show Detailed Instructions" id="aSCheckbox3"/><label for="aSCheckbox3">Show Detailed Instructions</label></span>
+  </fieldset>
+  
   <fieldset id="meat">
     <legend>Meat</legend>
     <span id="meatList"></span><br/>
@@ -36,12 +52,11 @@
     <legend>Sauces</legend>
     <span id="sauceIngredientList"></span>
   </fieldset>
-  <fieldset id="settings">
-    <legend>Serving Time</legend>
-    <input type="text" id="serveTime" size="8" value="7:00 pm"/>
+
+  <fieldset hidden id="ingredientschart">
+    <legend>Ingredients</legend>
+    <div id="ingredientschart"></div>
   </fieldset>
-  
-  <p></p>
 
   <fieldset id="timingchart">
     <legend>Timing Chart</legend>
@@ -49,9 +64,12 @@
   </fieldset>
   
   <p class="warn">Note: This chart is provided as a guide only. If you’re in any doubt as to whether your poultry or pork is cooked properly, continue cooking until juices run clear, or ideally use a meat thermometer to check the internal temperature has reached at least 70 degrees Celsius.</p>
-  <p class="footer">This was made by <a href="https://ianrenton.com">Ian Renton</a> and <a href="https://github.com/ianrenton/roastdinner/graphs/contributors">other contributors</a> on <a href="https://github.com/ianrenton/roastdinner">Github</a>.</p>
+  <p class="footer">The Original was made by <a href="https://ianrenton.com">Ian Renton</a> and <a href="https://github.com/ianrenton/roastdinner/graphs/contributors">other contributors</a> on <a href="https://github.com/ianrenton/roastdinner">Github</a>.With further developement by <a href="https://github.com/nsfranklin">Nicholas Franklin</a> also on <a href="https://github.com/nsfranklin/roastdinner">Github</a>.</p>
 
 <script>
+
+
+
 // Declare "meat" ingredient map. The keys to the map are the meat names. Each value is an
 // array of [X, Y], where the cooking time is "X minutes per lb plus Y minutes".
 var meats = new Map();
@@ -155,6 +173,10 @@ sauces.set('Creamy Mushroom Sauce', new Map([
 
 // Set up the page contents
 function setup() {  
+
+  jQuery('.settingsCheckbox').checkboxradio();
+  jQuery('.advancedSettingsCheckbox').checkboxradio();
+  
   // Set up meat radio buttons
   meatRadioButtonHTML = '';
   ings = Array.from( meats.keys() );
