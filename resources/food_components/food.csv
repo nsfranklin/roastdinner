@@ -1,0 +1,28 @@
+Category,Difficulty,Name,Submap
+meat,easy,Chicken,[25.25]
+meat,easy,Pork,[35.35]
+meat,easy,Beef,[25.25]
+meat,easy,Lamb,[25.25]
+meat,easy,Turkey,[10.70]
+meat,hard,Duck,[19.19]
+side,easy,Pigs in Blankets (full size),
+side,easy,Yorkshire Puddings (frozen),
+side,hard,Yorkshire Puddings (batter mix),
+side,hard,Stuffing (from packet),
+vegetable,easy,Roast Potatoes,
+vegetable,easy,Roast Parsnips,
+vegetable,easy,Roast Carrots,
+vegetable,hard,Creamy Mashed Potatoes,
+vegetable,easy,Carrots,
+vegetable,easy,Swede (mashed),
+vegetable,easy,Sprouts,
+vegetable,easy,Runner Beans,
+vegetable,easy,Broad Beans,
+vegetable,easy,Broccoli,
+vegetable,easy,Peas,
+sauce,easy,Gravy (granules),
+sauce,hard,Bread Sauce,
+sauce,hard,Onion Sauce,
+sauce,easy,Mint Sauce,
+sauce,easy,Apple Sauce,
+sauce,hard,Muchroom Sauce,

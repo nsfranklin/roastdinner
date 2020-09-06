@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Great Roast Dinner Timing Chart</title>
-  <link rel="stylesheet" href="./style.css"></style>
+  <link rel="stylesheet" href="./resources/style.css"></style>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script type='text/javascript' src='https://code.jquery.com/jquery-1.12.4.min.js'></script>
   <script type='text/javascript' src='https://code.jquery.com/ui/1.12.1/jquery-ui.min.js'></script>
@@ -25,7 +25,7 @@
 	<span class="item"><input type="checkbox" class="settingsCheckbox" value="Show Advanced Settings" id="sCheckbox0"/><label for="sCheckbox0">Show Advanced Settings</label></span>
   </fieldset>
   
-  <fieldset hidden id="advancedsettings">
+  <fieldset id="advancedsettings">
     <legend>Advanced Settings</legend>
 	<span class="item"><input type="checkbox" class="advancedSettingsCheckbox" value="Use Flexible Timings" id="aSCheckbox0"/><label for="aSCheckbox0">Use Flexible Timings</label></span>
 	<span class="item"><input type="checkbox" class="advancedSettingsCheckbox" value="Show Serving Estimate Calculator" id="aSCheckbox1"/><label for="aSCheckbox1">Show Serving Estimate Calculator</label></span>
@@ -174,10 +174,38 @@ sauces.set('Creamy Mushroom Sauce', new Map([
 // Set up the page contents
 function setup() {  
 
+  // Set up settings box
   jQuery('.settingsCheckbox').checkboxradio();
+  
+  // Set up serving time picker
+  jQuery.widget( "ui.timespinner", $.ui.spinner, {
+      options: { step: 60 * 1000 * 15, page: 4 },
+      _parse: function( value ) {
+        if ( typeof value === "string" ) {
+          return parseTime(value).getTime();
+        }
+        return value;
+      },
+      _format: function( value ) {
+        return formatTime(new Date(value));
+      }
+    });
+  jQuery('#serveTime').timespinner({change: function() {recalculate()}, stop: function() {recalculate()}});
+
+  // 
+
+
+  // Set up show advanced setting checkbox
+  jQuery("#advancedsettings").hide();
+  jQuery('#sCheckbox0').change(function() {
+		if(jQuery('#sCheckbox0').is(":checked"))   
+            jQuery("#advancedsettings").show();
+        else
+            jQuery("#advancedsettings").hide(); });
+
   jQuery('.advancedSettingsCheckbox').checkboxradio();
   
-  // Set up meat radio buttons
+    // Set up meat radio buttons
   meatRadioButtonHTML = '';
   ings = Array.from( meats.keys() );
   for (i = 0; i < ings.length; i++) { 
@@ -225,22 +253,7 @@ function setup() {
   
   jQuery('.ingCheckbox').change(function() { recalculate(); }); 
   jQuery('.ingCheckbox').checkboxradio();
-  
-  // Set up serving time picker
-  jQuery.widget( "ui.timespinner", $.ui.spinner, {
-      options: { step: 60 * 1000 * 15, page: 4 },
-      _parse: function( value ) {
-        if ( typeof value === "string" ) {
-          return parseTime(value).getTime();
-        }
-        return value;
-      },
-      _format: function( value ) {
-        return formatTime(new Date(value));
-      }
-    });
-  jQuery('#serveTime').timespinner({change: function() {recalculate()}, stop: function() {recalculate()}});
-  
+   
   // Default selections
   <!--
   jQuery('#radio0').prop("checked", true);
